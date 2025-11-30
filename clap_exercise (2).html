@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clap Your Hands - Aidy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #d299c2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Instruction bubble */
+        .instruction-bubble {
+            background: white;
+            border-radius: 30px;
+            padding: 20px 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            position: relative;
+            animation: floatBubble 3s ease-in-out infinite;
+        }
+
+        .instruction-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 15px solid transparent;
+            border-top-color: white;
+        }
+
+        .instruction-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #5a4a78;
+        }
+
+        .clap-count {
+            color: #ff6b9d;
+            font-size: 3rem;
+        }
+
+        @keyframes floatBubble {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Bear container */
+        .bear-container {
+            position: relative;
+            width: 400px;
+            height: 450px;
+            transform: scale(1.1);
+        }
+
+        /* Bear body */
+        .bear-body {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 200px;
+            background: linear-gradient(145deg, #c9a86c 0%, #a67c52 100%);
+            border-radius: 90px 90px 80px 80px;
+            box-shadow: inset -10px -10px 30px rgba(0,0,0,0.2);
+        }
+
+        .bear-belly {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 130px;
+            background: linear-gradient(145deg, #f5deb3 0%, #deb887 100%);
+            border-radius: 55px;
+        }
+
+        /* Bear head - positioned to connect with body */
+        .bear-head {
+            position: absolute;
+            bottom: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 150px;
+            background: linear-gradient(145deg, #c9a86c 0%, #a67c52 100%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        /* Bear ears */
+        .bear-ear {
+            position: absolute;
+            bottom: 320px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #c9a86c 0%, #a67c52 100%);
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .bear-ear.left {
+            left: 95px;
+        }
+
+        .bear-ear.right {
+            right: 95px;
+        }
+
+        .bear-ear-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(145deg, #ffb6c1 0%, #ff91a4 100%);
+            border-radius: 50%;
+        }
+
+        /* Bear face */
+        .bear-muzzle {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 60px;
+            background: linear-gradient(145deg, #f5deb3 0%, #deb887 100%);
+            border-radius: 50%;
+        }
+
+        .bear-nose {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 18px;
+            background: linear-gradient(145deg, #4a3728 0%, #2d1f14 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+
+        .bear-mouth {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 18px;
+            border: 4px solid #4a3728;
+            border-top: none;
+            border-radius: 0 0 18px 18px;
+        }
+
+        /* Bear eyes */
+        .bear-eye {
+            position: absolute;
+            top: 45px;
+            width: 30px;
+            height: 35px;
+            background: white;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .bear-eye.left {
+            left: 30px;
+        }
+
+        .bear-eye.right {
+            right: 30px;
+        }
+
+        .bear-pupil {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 18px;
+            background: #2d1f14;
+            border-radius: 50%;
+        }
+
+        .bear-pupil::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* Bear arms */
+        .bear-arm {
+            position: absolute;
+            bottom: 120px;
+            width: 60px;
+            height: 130px;
+            background: linear-gradient(145deg, #c9a86c 0%, #a67c52 100%);
+            border-radius: 30px;
+            transform-origin: top center;
+            transition: transform 0.15s ease-out;
+            z-index: 15;
+        }
+
+        .bear-arm.left {
+            left: 75px;
+            transform: rotate(40deg);
+        }
+
+        .bear-arm.right {
+            right: 75px;
+            transform: rotate(-40deg);
+        }
+
+        .bear-paw {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 45px;
+            background: linear-gradient(145deg, #f5deb3 0%, #deb887 100%);
+            border-radius: 50%;
+        }
+
+        /* Clapping animation */
+        .bear-container.clapping .bear-arm.left {
+            animation: clapLeft 0.3s ease-in-out;
+        }
+
+        .bear-container.clapping .bear-arm.right {
+            animation: clapRight 0.3s ease-in-out;
+        }
+
+        @keyframes clapLeft {
+            0% { transform: rotate(40deg); }
+            50% { transform: rotate(-10deg) translateX(25px); }
+            100% { transform: rotate(40deg); }
+        }
+
+        @keyframes clapRight {
+            0% { transform: rotate(-40deg); }
+            50% { transform: rotate(10deg) translateX(-25px); }
+            100% { transform: rotate(-40deg); }
+        }
+
+        /* Bear legs */
+        .bear-leg {
+            position: absolute;
+            bottom: 0;
+            width: 55px;
+            height: 70px;
+            background: linear-gradient(145deg, #c9a86c 0%, #a67c52 100%);
+            border-radius: 28px;
+            z-index: 1;
+        }
+
+        .bear-leg.left {
+            left: 140px;
+        }
+
+        .bear-leg.right {
+            right: 140px;
+        }
+
+        .bear-foot {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            height: 30px;
+            background: linear-gradient(145deg, #a67c52 0%, #8b6914 100%);
+            border-radius: 32px 32px 32px 32px;
+        }
+
+        /* Feedback area */
+        .feedback {
+            margin-top: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #5a4a78;
+            min-height: 50px;
+        }
+
+        .feedback.success {
+            color: #4CAF50;
+            animation: celebratePulse 0.5s ease-in-out;
+        }
+
+        @keyframes celebratePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Stars animation for success */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .star {
+            position: absolute;
+            font-size: 3rem;
+            animation: starFall 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes starFall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .progress-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: 3px solid #5a4a78;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.completed {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .progress-dot.current {
+            background: #ff6b9d;
+            border-color: #ff6b9d;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Control buttons */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn-start {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+        }
+
+        .btn-backup {
+            background: linear-gradient(145deg, #9c27b0, #7b1fa2);
+            color: white;
+            box-shadow: 0 5px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        .btn-backup:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.5);
+        }
+
+        .btn-reset {
+            background: linear-gradient(145deg, #ff9800, #f57c00);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        /* Microphone indicator */
+        .mic-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .mic-icon {
+            width: 30px;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .mic-icon.active {
+            background: #4CAF50;
+            animation: micPulse 1s infinite;
+        }
+
+        @keyframes micPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
+        }
+
+        .mic-status {
+            font-weight: 600;
+            color: #5a4a78;
+        }
+
+        /* Sound level meter */
+        .sound-meter {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .sound-level {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #ff6b9d);
+            width: 0%;
+            transition: width 0.1s ease;
+            border-radius: 10px;
+        }
+
+        /* Celebration overlay */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .celebration.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .celebration-text {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #5a4a78;
+            text-align: center;
+            animation: bounce 0.5s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .celebration-emoji {
+            font-size: 6rem;
+            margin-top: 20px;
+        }
+
+        /* Clap counter display */
+        .clap-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #5a4a78;
+        }
+
+        .clap-counter span {
+            color: #ff6b9d;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="mic-indicator">
+        <div class="mic-icon" id="micIcon">🎤</div>
+        <span class="mic-status" id="micStatus">Press Start</span>
+    </div>
+
+    <div class="clap-counter" id="clapCounter" style="display: none;">
+        Claps: <span id="clapCountDisplay">0</span> / <span id="targetDisplay">0</span>
+    </div>
+
+    <div class="container">
+        <div class="instruction-bubble">
+            <div class="instruction-text">
+                Clap your hands <span class="clap-count" id="targetClaps">0</span> 
+                <span id="clapWord">times</span>!
+            </div>
+        </div>
+
+        <div class="bear-container" id="bearContainer">
+            <!-- Ears -->
+            <div class="bear-ear left"><div class="bear-ear-inner"></div></div>
+            <div class="bear-ear right"><div class="bear-ear-inner"></div></div>
+            
+            <!-- Head -->
+            <div class="bear-head">
+                <div class="bear-eye left"><div class="bear-pupil"></div></div>
+                <div class="bear-eye right"><div class="bear-pupil"></div></div>
+                <div class="bear-muzzle">
+                    <div class="bear-nose"></div>
+                    <div class="bear-mouth"></div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="bear-body">
+                <div class="bear-belly"></div>
+            </div>
+
+            <!-- Arms -->
+            <div class="bear-arm left"><div class="bear-paw"></div></div>
+            <div class="bear-arm right"><div class="bear-paw"></div></div>
+
+            <!-- Legs -->
+            <div class="bear-leg left"><div class="bear-foot"></div></div>
+            <div class="bear-leg right"><div class="bear-foot"></div></div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="progress-container" id="progressContainer"></div>
+    </div>
+
+    <div class="sound-meter" id="soundMeter" style="display: none;">
+        <div class="sound-level" id="soundLevel"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-start" id="startBtn" onclick="startExercise()">▶️ Start</button>
+        <button class="btn btn-backup" id="backupBtn" onclick="manualClap()" style="display: none;">👏 Manual Confirm</button>
+        <button class="btn btn-reset" id="resetBtn" onclick="resetExercise()" style="display: none;">🔄 Reset</button>
+    </div>
+
+    <div class="stars-container" id="starsContainer"></div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-text">Well done, Eduard! 🎉</div>
+        <div class="celebration-emoji">🌟⭐🌟</div>
+    </div>
+
+    <script>
+        // Configuration
+        const TOTAL_ROUNDS = 5;
+        const CLAP_THRESHOLD = 0.15; // Lower = more sensitive
+        const CLAP_COOLDOWN = 400; // ms between claps
+        const SPIKE_THRESHOLD = 0.08; // Detect sudden volume increase
+
+        // State
+        let currentRound = 0;
+        let targetClaps = 0;
+        let detectedClaps = 0;
+        let isListening = false;
+        let lastClapTime = 0;
+        let lastVolume = 0;
+        let audioContext;
+        let analyser;
+        let microphone;
+        let isExerciseActive = false;
+        let isSpeaking = false;
+
+        // Speech synthesis - same as other exercises
+        const synth = window.speechSynthesis;
+
+        function speak(text) {
+            if (isSpeaking) return;
+            synth.cancel();
+            
+            let voices = synth.getVoices();
+            if (voices.length === 0) {
+                synth.onvoiceschanged = () => {
+                    voices = synth.getVoices();
+                    speakWithVoice(text, voices);
+                };
+                return;
+            }
+            speakWithVoice(text, voices);
+        }
+
+        function speakWithVoice(text, voices) {
+            isSpeaking = true;
+            const utterance = new SpeechSynthesisUtterance(text);
+            const femaleVoice = voices.find(voice =>
+                voice.lang.includes('en') &&
+                (voice.name.includes('Zira') || voice.name.includes('Female') ||
+                 (voice.name.includes('Google') && voice.name.includes('US')))
+            );
+            if (femaleVoice) utterance.voice = femaleVoice;
+            utterance.rate = 0.7;
+            utterance.pitch = 0.9;
+            utterance.volume = 0.8;
+            utterance.onend = () => { isSpeaking = false; };
+            synth.speak(utterance);
+        }
+
+        // Initialize progress dots
+        function initProgress() {
+            const container = document.getElementById('progressContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < TOTAL_ROUNDS; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                if (i === 0) dot.classList.add('current');
+                container.appendChild(dot);
+            }
+        }
+
+        // Update progress dots
+        function updateProgress() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('current', 'completed');
+                if (index < currentRound) {
+                    dot.classList.add('completed');
+                } else if (index === currentRound) {
+                    dot.classList.add('current');
+                }
+            });
+        }
+
+        // Start microphone listening
+        async function startMicrophone() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                });
+                microphone = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.3;
+                microphone.connect(analyser);
+
+                document.getElementById('micIcon').classList.add('active');
+                document.getElementById('micStatus').textContent = 'Listening...';
+                document.getElementById('soundMeter').style.display = 'block';
+                
+                isListening = true;
+                detectClaps();
+                return true;
+            } catch (err) {
+                console.error('Microphone error:', err);
+                document.getElementById('micStatus').textContent = 'Microphone error';
+                document.getElementById('backupBtn').style.display = 'inline-block';
+                return false;
+            }
+        }
+
+        // Detect claps from audio - improved algorithm
+        function detectClaps() {
+            if (!isListening || !analyser) return;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Calculate average volume with emphasis on clap frequencies (2000-4000 Hz)
+            let sum = 0;
+            let count = 0;
+            for (let i = 20; i < 100; i++) { // Focus on mid-high frequencies typical of claps
+                sum += dataArray[i];
+                count++;
+            }
+            const currentVolume = sum / count / 255;
+
+            // Update sound level meter
+            document.getElementById('soundLevel').style.width = `${currentVolume * 100 * 3}%`;
+
+            // Detect clap: sudden spike in volume
+            const volumeSpike = currentVolume - lastVolume;
+            const now = Date.now();
+            
+            if (isExerciseActive && 
+                currentVolume > CLAP_THRESHOLD && 
+                volumeSpike > SPIKE_THRESHOLD &&
+                now - lastClapTime > CLAP_COOLDOWN) {
+                
+                lastClapTime = now;
+                onClapDetected();
+            }
+
+            lastVolume = currentVolume * 0.7 + lastVolume * 0.3; // Smooth the baseline
+
+            requestAnimationFrame(detectClaps);
+        }
+
+        // Handle clap detection
+        function onClapDetected() {
+            detectedClaps++;
+            triggerClapAnimation();
+            
+            // Update displays
+            document.getElementById('clapCountDisplay').textContent = detectedClaps;
+            document.getElementById('feedback').textContent = `👏 ${detectedClaps} / ${targetClaps}`;
+            
+            if (detectedClaps >= targetClaps) {
+                roundComplete();
+            }
+        }
+
+        // Manual clap button (backup for Oana)
+        function manualClap() {
+            if (isExerciseActive) {
+                onClapDetected();
+            }
+        }
+
+        // Trigger bear clapping animation
+        function triggerClapAnimation() {
+            const bear = document.getElementById('bearContainer');
+            bear.classList.remove('clapping');
+            void bear.offsetWidth; // Force reflow
+            bear.classList.add('clapping');
+            
+            createClapEffect();
+        }
+
+        // Visual clap effect
+        function createClapEffect() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.textContent = '✨';
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 0.3}s`;
+            document.getElementById('starsContainer').appendChild(star);
+            setTimeout(() => star.remove(), 1000);
+        }
+
+        // Round complete
+        function roundComplete() {
+            isExerciseActive = false;
+            
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.textContent = 'Very good! 🌟';
+            feedbackEl.classList.add('success');
+            
+            speak('Well done! Very good!');
+            
+            // Create celebration stars
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => createClapEffect(), i * 100);
+            }
+            
+            currentRound++;
+            updateProgress();
+            
+            if (currentRound >= TOTAL_ROUNDS) {
+                setTimeout(showFinalCelebration, 1500);
+            } else {
+                setTimeout(nextRound, 2500);
+            }
+        }
+
+        // Next round
+        function nextRound() {
+            detectedClaps = 0;
+            targetClaps = Math.floor(Math.random() * 3) + 1; // 1-3 claps
+            
+            // Update all displays
+            document.getElementById('targetClaps').textContent = targetClaps;
+            document.getElementById('clapWord').textContent = targetClaps === 1 ? 'time' : 'times';
+            document.getElementById('clapCountDisplay').textContent = '0';
+            document.getElementById('targetDisplay').textContent = targetClaps;
+            
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.textContent = '';
+            feedbackEl.classList.remove('success');
+            
+            // Speak the instruction
+            const instruction = targetClaps === 1 
+                ? 'Clap your hands one time!' 
+                : `Clap your hands ${targetClaps} times!`;
+            speak(instruction);
+            
+            // Bear demonstrates first after speech
+            setTimeout(() => {
+                document.getElementById('feedback').textContent = 'Watch me! 👀';
+                for (let i = 0; i < targetClaps; i++) {
+                    setTimeout(() => triggerClapAnimation(), i * 500);
+                }
+            }, 2000);
+            
+            // Start listening after demo
+            setTimeout(() => {
+                isExerciseActive = true;
+                document.getElementById('feedback').textContent = 'Now you! 👏';
+                speak('Now you!');
+            }, 2000 + targetClaps * 500 + 800);
+        }
+
+        // Start exercise
+        async function startExercise() {
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('backupBtn').style.display = 'inline-block';
+            document.getElementById('resetBtn').style.display = 'inline-block';
+            document.getElementById('clapCounter').style.display = 'block';
+            
+            currentRound = 0;
+            initProgress();
+            
+            const micStarted = await startMicrophone();
+            if (!micStarted) {
+                document.getElementById('feedback').textContent = 'Use the Manual Confirm button';
+            }
+            
+            speak('Let us clap our hands together!');
+            setTimeout(nextRound, 2500);
+        }
+
+        // Reset exercise
+        function resetExercise() {
+            isExerciseActive = false;
+            isListening = false;
+            currentRound = 0;
+            detectedClaps = 0;
+            
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('backupBtn').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'none';
+            document.getElementById('clapCounter').style.display = 'none';
+            document.getElementById('soundMeter').style.display = 'none';
+            document.getElementById('micIcon').classList.remove('active');
+            document.getElementById('micStatus').textContent = 'Press Start';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').classList.remove('success');
+            document.getElementById('targetClaps').textContent = '0';
+            document.getElementById('celebration').classList.remove('show');
+            document.getElementById('progressContainer').innerHTML = '';
+        }
+
+        // Final celebration
+        function showFinalCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            speak('Congratulations! You finished all exercises! You are amazing!');
+        }
+
+        // Preload voices
+        window.addEventListener('load', function() {
+            let voices = speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                speechSynthesis.onvoiceschanged = () => {
+                    voices = speechSynthesis.getVoices();
+                };
+            }
+        });
+    </script>
+</body>
+</html>

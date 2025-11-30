@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Give Me - Aidy AI</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* BEAR AVATAR */
+        .bear-container {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            z-index: 10;
+        }
+
+        .bear {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .bear.talking {
+            animation: talkingAnimation 0.5s infinite alternate !important;
+        }
+
+        @keyframes talkingAnimation {
+            0% {
+                transform: translateY(0px) scale(1) rotate(0deg);
+                filter: brightness(1);
+            }
+            100% {
+                transform: translateY(-8px) scale(1.1) rotate(2deg);
+                filter: brightness(1.2);
+            }
+        }
+
+        .bear-head {
+            width: 70px;
+            height: 70px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            border: 2px solid #654321;
+        }
+
+        .bear-ear {
+            width: 25px;
+            height: 25px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            border: 1px solid #654321;
+        }
+
+        .bear-ear.left { top: -8px; left: 10px; }
+        .bear-ear.right { top: -8px; right: 10px; }
+
+        .ear-inner {
+            width: 12px;
+            height: 12px;
+            background: #DEB887;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bear-snout {
+            width: 35px;
+            height: 25px;
+            background: #DEB887;
+            border-radius: 20px;
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #654321;
+        }
+
+        .bear-nose {
+            width: 8px;
+            height: 5px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bear-mouth {
+            width: 8px;
+            height: 8px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.2s ease;
+        }
+
+        .bear.talking .bear-mouth {
+            width: 16px;
+            height: 12px;
+            background: #FF0000 !important;
+            border-radius: 50%;
+            animation: mouthPulse 0.3s infinite alternate;
+        }
+
+        @keyframes mouthPulse {
+            0% {
+                width: 12px;
+                height: 8px;
+                background: #FF0000;
+            }
+            100% {
+                width: 18px;
+                height: 14px;
+                background: #FF4444;
+            }
+        }
+
+        .bear-eye {
+            width: 10px;
+            height: 10px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            animation: blink 3s infinite;
+        }
+
+        .bear-eye.left { left: 15px; }
+        .bear-eye.right { right: 15px; }
+
+        .eye-shine {
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 2px solid #4a90e2;
+            min-width: 80px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #2c3e50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        /* EXERCISE STYLES */
+        .header h1 {
+            color: #4a90e2;
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            margin-right: 140px;
+        }
+
+        .level-info {
+            background: #f0f4ff;
+            padding: 12px;
+            border-radius: 10px;
+            color: #4a90e2;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .instruction {
+            font-size: 2em;
+            color: #2c3e50;
+            margin: 30px 0;
+            padding: 20px;
+            background: #e8f4fd;
+            border-radius: 15px;
+            border: 3px solid #4a90e2;
+            min-height: 80px;
+        }
+
+        .objects {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            min-height: 250px;
+        }
+
+        .object {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .object:hover {
+            border-color: #4a90e2;
+            transform: scale(1.05);
+        }
+
+        .object.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .object.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+            animation: shake 0.6s ease;
+        }
+
+        .object-image {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+
+        .object-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: #4a90e2;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .debug {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: lime;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-family: monospace;
+            max-width: 400px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Bear Avatar -->
+        <div class="bear-container">
+            <div class="bear" id="bear">
+                <div class="bear-ear left"><div class="ear-inner"></div></div>
+                <div class="bear-ear right"><div class="ear-inner"></div></div>
+                <div class="bear-head">
+                    <div class="bear-eye left"><div class="eye-shine"></div></div>
+                    <div class="bear-eye right"><div class="eye-shine"></div></div>
+                    <div class="bear-snout">
+                        <div class="bear-nose"></div>
+                        <div class="bear-mouth"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="speech-bubble" id="speechBubble"></div>
+        </div>
+
+        <div class="header">
+            <h1>🎯 Give Me Exercise</h1>
+            <p>Listen to Bear and give what Bear asks for!</p>
+        </div>
+
+        <div class="level-info">Level 1 - Easy (3 objects)</div>
+
+        <div class="instruction" id="instruction">
+            Click "Start" to begin! Bear is ready to help you learn! 🐻
+        </div>
+
+        <div class="objects" id="objects"></div>
+
+        <div>
+            <button class="btn" id="startBtn">▶️ Start</button>
+            <button class="btn" id="nextBtn" style="display:none;">➡️ Next</button>
+            <button class="btn" id="homeBtn">🏠 Home</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="correct">0</div>
+                <div>Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total">0</div>
+                <div>Total</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="debug" id="debug"></div>
+
+    <script>
+        const $ = (id) => document.getElementById(id);
+
+        let correctCount = 0;
+        let totalCount = 0;
+        let currentTarget = null;
+        let isSpeaking = false;
+
+        const items = [
+            {name: 'ball', emoji: '⚽'},
+            {name: 'book', emoji: '📖'},
+            {name: 'apple', emoji: '🍎'},
+            {name: 'car', emoji: '🚗'},
+            {name: 'cup', emoji: '☕'},
+            {name: 'shoe', emoji: '👟'}
+        ];
+
+        function log(msg) {
+            console.log(msg);
+            const d = $('debug');
+            d.innerHTML = `${new Date().toLocaleTimeString()}: ${msg}<br>` + d.innerHTML;
+        }
+
+        function bearSpeak(text, bubble) {
+            log('🎤 SPEAKING: ' + text);
+
+            const bear = $('bear');
+            const speechBubble = $('speechBubble');
+
+            speechBubble.textContent = bubble || text;
+            speechBubble.classList.add('show');
+            bear.classList.add('talking');
+            isSpeaking = true;
+
+            // IMPORTANT: Cancel any previous speech
+            speechSynthesis.cancel();
+
+            // Create utterance IMMEDIATELY
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            // Get voices
+            const voices = speechSynthesis.getVoices();
+            log('📢 Available voices: ' + voices.length);
+
+            // Try to find a female voice
+            const femaleVoice = voices.find(v =>
+                v.lang.startsWith('en') &&
+                (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
+            );
+
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+                log('🔊 Using voice: ' + femaleVoice.name);
+            } else {
+                log('⚠️ No female voice found, using default');
+            }
+
+            utterance.rate = 0.7;
+            utterance.pitch = 0.9;
+            utterance.volume = 1.0;
+            utterance.lang = 'en-US';
+
+            utterance.onstart = () => {
+                log('▶️ Speech STARTED');
+            };
+
+            utterance.onend = () => {
+                bear.classList.remove('talking');
+                speechBubble.classList.remove('show');
+                isSpeaking = false;
+                log('✅ Speech ENDED');
+            };
+
+            utterance.onerror = (e) => {
+                log('❌ ERROR: ' + e.error + ' - ' + e.message);
+                bear.classList.remove('talking');
+                speechBubble.classList.remove('show');
+                isSpeaking = false;
+            };
+
+            // Speak IMMEDIATELY - no setTimeout
+            try {
+                speechSynthesis.speak(utterance);
+                log('📣 speechSynthesis.speak() called');
+            } catch (e) {
+                log('❌ EXCEPTION: ' + e.message);
+            }
+        }
+
+        function startGame() {
+            log('🎮 START GAME CALLED');
+            $('startBtn').style.display = 'none';
+            bearSpeak("Hi Aidy! I'm Bear! Let's start learning!", "Let's learn!");
+            setTimeout(nextRound, 4000);
+        }
+
+        function nextRound() {
+            log('➡️ NEXT ROUND');
+
+            if (isSpeaking) {
+                log('⏳ Still speaking...');
+                return;
+            }
+
+            $('nextBtn').style.display = 'none';
+
+            const shuffled = items.sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, 3);
+            currentTarget = selected[Math.floor(Math.random() * 3)];
+
+            log('🎯 Target: ' + currentTarget.name);
+
+            $('instruction').textContent = `Bear says: "Give me the ${currentTarget.name}"`;
+            bearSpeak(`Aidy, please give me the ${currentTarget.name}`, `Give me ${currentTarget.name}`);
+
+            const container = $('objects');
+            container.innerHTML = '';
+
+            selected.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'object';
+                div.innerHTML = `
+                    <div class="object-image">${item.emoji}</div>
+                    <div class="object-name">${item.name}</div>
+                `;
+                div.addEventListener('click', () => selectObject(item, div));
+                container.appendChild(div);
+            });
+        }
+
+        function selectObject(item, element) {
+            log('👆 SELECTED: ' + item.name);
+
+            if (isSpeaking) return;
+
+            totalCount++;
+            const isCorrect = item.name === currentTarget.name;
+
+            if (isCorrect) {
+                correctCount++;
+                element.className = 'object correct';
+                $('instruction').textContent = `✅ Wonderful! You gave Bear the ${item.name}!`;
+                bearSpeak(`Wonderful Aidy! You gave me the ${item.name}!`, "Great job!");
+
+                setTimeout(() => {
+                    $('nextBtn').style.display = 'inline-block';
+                }, 3000);
+            } else {
+                element.className = 'object wrong';
+                $('instruction').textContent = `Try again! Bear asked for the ${currentTarget.name}`;
+                bearSpeak(`Try again Aidy! I asked for the ${currentTarget.name}`, "Try again!");
+
+                setTimeout(() => {
+                    element.className = 'object';
+                }, 1000);
+            }
+
+            $('correct').textContent = correctCount;
+            $('total').textContent = totalCount;
+
+            document.querySelectorAll('.object').forEach(obj => {
+                obj.style.pointerEvents = 'none';
+            });
+
+            setTimeout(() => {
+                document.querySelectorAll('.object').forEach(obj => {
+                    obj.style.pointerEvents = 'auto';
+                });
+            }, 2000);
+        }
+
+        // EVENT LISTENERS
+        $('startBtn').addEventListener('click', () => {
+            log('🖱️ START BUTTON CLICKED!');
+            startGame();
+        });
+
+        $('nextBtn').addEventListener('click', () => {
+            log('🖱️ NEXT BUTTON CLICKED!');
+            nextRound();
+        });
+
+        $('homeBtn').addEventListener('click', () => {
+            if (confirm('Go back to main menu?')) {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // INIT
+        window.addEventListener('load', () => {
+            log('🚀 PAGE LOADED');
+
+            // Load voices
+            if (speechSynthesis.getVoices().length === 0) {
+                speechSynthesis.addEventListener('voiceschanged', () => {
+                    log('✅ Voices loaded: ' + speechSynthesis.getVoices().length);
+                });
+            } else {
+                log('✅ Voices loaded: ' + speechSynthesis.getVoices().length);
+            }
+
+            log('✅ Ready! Click START button.');
+
+            // FORCE AUDIO ACTIVATION - Click anywhere
+            let audioActivated = false;
+            document.body.addEventListener('click', () => {
+                if (!audioActivated) {
+                    // Test audio activation
+                    const testUtterance = new SpeechSynthesisUtterance('');
+                    speechSynthesis.speak(testUtterance);
+                    audioActivated = true;
+                    log('🔊 Audio activated by user click');
+                }
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>

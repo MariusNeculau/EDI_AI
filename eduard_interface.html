@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDI - Learning Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .content-area {
+            flex: 1;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Bear Area - Right Side, Much Bigger */
+        .bear-area {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .bear-container {
+            width: 250px;
+            height: 280px;
+            position: relative;
+        }
+
+        .bear {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .bear.talking {
+            animation: talkingAnimation 0.5s infinite alternate !important;
+        }
+
+        @keyframes talkingAnimation {
+            0% { transform: translateY(0px) scale(1) rotate(0deg); filter: brightness(1); }
+            100% { transform: translateY(-12px) scale(1.08) rotate(2deg); filter: brightness(1.15); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .bear-head {
+            width: 160px;
+            height: 160px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            border: 4px solid #654321;
+        }
+
+        .bear-ear {
+            width: 55px;
+            height: 55px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            border: 3px solid #654321;
+        }
+
+        .bear-ear.left { top: -18px; left: 15px; }
+        .bear-ear.right { top: -18px; right: 15px; }
+
+        .ear-inner {
+            width: 28px;
+            height: 28px;
+            background: #DEB887;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bear-snout {
+            width: 80px;
+            height: 58px;
+            background: #DEB887;
+            border-radius: 35px;
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #654321;
+        }
+
+        .bear-nose {
+            width: 18px;
+            height: 12px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bear-mouth {
+            width: 18px;
+            height: 18px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.2s ease;
+        }
+
+        .bear.talking .bear-mouth {
+            width: 35px;
+            height: 28px;
+            background: #FF0000 !important;
+            border-radius: 50%;
+            animation: mouthPulse 0.3s infinite alternate;
+        }
+
+        @keyframes mouthPulse {
+            0% { width: 28px; height: 20px; background: #FF0000; }
+            100% { width: 40px; height: 32px; background: #FF4444; }
+        }
+
+        .bear-eye {
+            width: 22px;
+            height: 22px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 42px;
+            animation: blink 3s infinite;
+        }
+
+        .bear-eye.left { left: 32px; }
+        .bear-eye.right { right: 32px; }
+
+        .eye-shine {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: 3px solid #4a90e2;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+            min-width: 200px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            position: relative;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 12px solid white;
+        }
+
+        .speech-bubble.show { opacity: 1; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3em;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 4px rgba(102, 126, 234, 0.3));
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: block;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .game-card.receptive { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+        .game-card.receptive-simple { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+        .game-card.expressive { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .game-card.repeat { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .game-card.pointing { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .game-card.colors { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .game-card.numbers { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .game-card.matching { background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%); }
+        .game-card.dashboard { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+
+        .game-icon {
+            font-size: 3.5em;
+            margin-bottom: 12px;
+        }
+
+        .game-title {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .game-description {
+            color: rgba(255,255,255,0.9);
+            font-size: 1em;
+            line-height: 1.3;
+        }
+
+        /* Start Overlay */
+        .start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .start-overlay.hidden { display: none; }
+
+        .start-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 80px;
+            border-radius: 30px;
+            border: 5px solid white;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.6);
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .start-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 25px 70px rgba(102, 126, 234, 0.8);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .start-subtitle {
+            font-size: 0.4em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 1100px) {
+            .main-layout {
+                flex-direction: column-reverse;
+                align-items: center;
+            }
+            .bear-area {
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                padding-top: 0;
+            }
+            .bear-container {
+                width: 180px;
+                height: 200px;
+            }
+            .bear {
+                width: 160px;
+                height: 160px;
+            }
+            .bear-head {
+                width: 120px;
+                height: 120px;
+            }
+            .bear-ear {
+                width: 40px;
+                height: 40px;
+            }
+            .bear-ear.left { top: -12px; left: 10px; }
+            .bear-ear.right { top: -12px; right: 10px; }
+            .ear-inner { width: 20px; height: 20px; }
+            .bear-snout { width: 60px; height: 44px; bottom: 16px; }
+            .bear-nose { width: 14px; height: 9px; top: 7px; }
+            .bear-mouth { width: 14px; height: 14px; bottom: 7px; }
+            .bear-eye { width: 17px; height: 17px; top: 32px; }
+            .bear-eye.left { left: 24px; }
+            .bear-eye.right { right: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Start Overlay -->
+    <div class="start-overlay" id="startOverlay">
+        <button class="start-button" onclick="startInterface()">
+            🌟 START 🌟
+            <div class="start-subtitle">Click to begin!</div>
+        </button>
+    </div>
+
+    <div class="main-layout">
+        <!-- Content Area - Left -->
+        <div class="content-area">
+            <div class="header">
+                <h1>🌟 EDI Learning Games 🌟</h1>
+                <p>Choose a game to play with Bear!</p>
+            </div>
+
+            <div class="games-grid">
+                <a href="eduard_bear_clear.html" class="game-card receptive">
+                    <div class="game-icon">👉</div>
+                    <div class="game-title">Show Me</div>
+                    <div class="game-description">Point to objects Bear asks for!</div>
+                </a>
+
+                <a href="eduard_receptive_simple.html" class="game-card receptive-simple">
+                    <div class="game-icon">🎯</div>
+                    <div class="game-title">Show Me Simple</div>
+                    <div class="game-description">Easy version with simple objects!</div>
+                </a>
+
+                <a href="eduard_expressive.html" class="game-card expressive">
+                    <div class="game-icon">🗣️</div>
+                    <div class="game-title">Tell Me</div>
+                    <div class="game-description">Say the names of objects!</div>
+                </a>
+
+                <a href="eduard_repeat.html" class="game-card repeat">
+                    <div class="game-icon">🎤</div>
+                    <div class="game-title">Repeat After Me</div>
+                    <div class="game-description">Listen and repeat words!</div>
+                </a>
+
+                <a href="eduard_pointing.html" class="game-card pointing">
+                    <div class="game-icon">☝️</div>
+                    <div class="game-title">Point & Show</div>
+                    <div class="game-description">Point to things and show Bear!</div>
+                </a>
+
+                <a href="eduard_colors.html" class="game-card colors">
+                    <div class="game-icon">🎨</div>
+                    <div class="game-title">Learn Colors</div>
+                    <div class="game-description">Discover beautiful colors!</div>
+                </a>
+
+                <a href="eduard_numbers.html" class="game-card numbers">
+                    <div class="game-icon">🔢</div>
+                    <div class="game-title">Count Numbers</div>
+                    <div class="game-description">Count objects and learn!</div>
+                </a>
+
+                <a href="eduard_matching.html" class="game-card matching">
+                    <div class="game-icon">🎴</div>
+                    <div class="game-title">Matching Game</div>
+                    <div class="game-description">Find pairs that match!</div>
+                </a>
+
+                <a href="dashboard.html" class="game-card dashboard">
+                    <div class="game-icon">📊</div>
+                    <div class="game-title">Progress Dashboard</div>
+                    <div class="game-description">View EDI's learning progress!</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Bear Area - Right -->
+        <div class="bear-area">
+            <div class="bear-container">
+                <div class="bear" id="bear">
+                    <div class="bear-ear left"><div class="ear-inner"></div></div>
+                    <div class="bear-ear right"><div class="ear-inner"></div></div>
+                    <div class="bear-head">
+                        <div class="bear-eye left"><div class="eye-shine"></div></div>
+                        <div class="bear-eye right"><div class="eye-shine"></div></div>
+                        <div class="bear-snout">
+                            <div class="bear-nose"></div>
+                            <div class="bear-mouth" id="bearMouth"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="speech-bubble" id="speechBubble">Hi! Pick a game!</div>
+        </div>
+    </div>
+
+    <script>
+        function speak(text, bubbleText = null) {
+            window.speechSynthesis.cancel();
+
+            const speechBubble = document.getElementById('speechBubble');
+            const bear = document.getElementById('bear');
+
+            speechBubble.textContent = bubbleText || text;
+            speechBubble.classList.add('show');
+            bear.classList.add('talking');
+
+            let voices = speechSynthesis.getVoices();
+
+            if (voices.length === 0) {
+                speechSynthesis.onvoiceschanged = () => {
+                    voices = speechSynthesis.getVoices();
+                    speakWithVoice(text, voices);
+                };
+                return;
+            }
+            speakWithVoice(text, voices);
+        }
+
+        function speakWithVoice(text, voices) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            const femaleVoice = voices.find(voice =>
+                voice.lang.includes('en') &&
+                (voice.name.includes('Zira') || voice.name.includes('Female') ||
+                 (voice.name.includes('Google') && voice.name.includes('US')))
+            );
+            if (femaleVoice) utterance.voice = femaleVoice;
+            utterance.rate = 0.7;
+            utterance.pitch = 0.9;
+            utterance.volume = 0.8;
+
+            utterance.onend = function() {
+                document.getElementById('speechBubble').classList.remove('show');
+                document.getElementById('bear').classList.remove('talking');
+            };
+
+            speechSynthesis.speak(utterance);
+
+            setTimeout(() => {
+                document.getElementById('speechBubble').classList.remove('show');
+                document.getElementById('bear').classList.remove('talking');
+            }, text.length * 100 + 2000);
+        }
+
+        function startInterface() {
+            document.getElementById('startOverlay').classList.add('hidden');
+            setTimeout(() => {
+                speak("Hi! I'm Bear! Pick any game you want to play!", "Hi! Pick a game! 🐻");
+            }, 500);
+        }
+
+        // Preload voices
+        window.addEventListener('load', function() {
+            speechSynthesis.getVoices();
+        });
+    </script>
+</body>
+</html>

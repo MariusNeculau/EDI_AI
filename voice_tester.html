@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Tester</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+        }
+        h1 {
+            color: #4a90e2;
+            text-align: center;
+        }
+        .voice-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #ddd;
+        }
+        .voice-info {
+            flex: 1;
+        }
+        .voice-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .voice-lang {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #4a90e2;
+            color: white;
+            margin-left: 10px;
+        }
+        .btn:hover {
+            background: #357abd;
+        }
+        .test-phrase {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            border: 3px solid #4a90e2;
+        }
+        .test-phrase input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .selected {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Tester - Choose Best Voice for Edi</h1>
+
+        <div class="test-phrase">
+            <h3>Test Phrase:</h3>
+            <input type="text" id="testPhrase" value="Hello Edi! Give me the ball please. Great job!">
+        </div>
+
+        <div id="voicesList"></div>
+    </div>
+
+    <script>
+        let voices = [];
+        let selectedVoice = null;
+
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            displayVoices();
+        }
+
+        function displayVoices() {
+            const container = document.getElementById('voicesList');
+            container.innerHTML = '';
+
+            if (voices.length === 0) {
+                container.innerHTML = '<p>Loading voices...</p>';
+                return;
+            }
+
+            voices.forEach((voice, index) => {
+                const div = document.createElement('div');
+                div.className = 'voice-item';
+                div.innerHTML = `
+                    <div class="voice-info">
+                        <div class="voice-name">${index + 1}. ${voice.name}</div>
+                        <div class="voice-lang">Language: ${voice.lang}</div>
+                    </div>
+                    <button class="btn" onclick="testVoice(${index})">Test Voice</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function testVoice(index) {
+            const voice = voices[index];
+            const text = document.getElementById('testPhrase').value;
+
+            // Highlight selected voice
+            const voiceItems = document.querySelectorAll('.voice-item');
+            voiceItems.forEach(item => item.classList.remove('selected'));
+            voiceItems[index].classList.add('selected');
+
+            // Stop any current speech
+            speechSynthesis.cancel();
+
+            // Speak with selected voice
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = voice;
+            utterance.rate = 0.7;
+            utterance.pitch = 1.2;
+            utterance.volume = 0.8;
+
+            console.log('Testing voice:', voice.name);
+            speechSynthesis.speak(utterance);
+
+            selectedVoice = voice;
+        }
+
+        // Load voices when ready
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
+        // Load voices again after a short delay (for some browsers)
+        setTimeout(loadVoices, 100);
+    </script>
+</body>
+</html>

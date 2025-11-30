@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduard's Bear Avatar</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .bear {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+        }
+
+        /* Bear head */
+        .bear-head {
+            width: 120px;
+            height: 120px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            border: 3px solid #654321;
+        }
+
+        /* Bear ears */
+        .bear-ear {
+            width: 40px;
+            height: 40px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            border: 2px solid #654321;
+        }
+
+        .bear-ear.left {
+            top: -15px;
+            left: 15px;
+        }
+
+        .bear-ear.right {
+            top: -15px;
+            right: 15px;
+        }
+
+        .ear-inner {
+            width: 20px;
+            height: 20px;
+            background: #DEB887;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Bear face */
+        .bear-snout {
+            width: 60px;
+            height: 40px;
+            background: #DEB887;
+            border-radius: 30px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid #654321;
+        }
+
+        .bear-nose {
+            width: 12px;
+            height: 8px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Bear mouth - animated */
+        .bear-mouth {
+            width: 20px;
+            height: 6px;
+            border: 2px solid #2C1810;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease;
+        }
+
+        .bear-mouth.talking {
+            height: 12px;
+            border-radius: 0 0 15px 15px;
+            animation: talk 0.5s infinite alternate;
+        }
+
+        @keyframes talk {
+            0% { height: 6px; }
+            100% { height: 12px; }
+        }
+
+        /* Bear eyes */
+        .bear-eye {
+            width: 16px;
+            height: 16px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 35px;
+        }
+
+        .bear-eye.left {
+            left: 25px;
+        }
+
+        .bear-eye.right {
+            right: 25px;
+        }
+
+        .eye-shine {
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+        }
+
+        /* Happy expression */
+        .bear.happy .bear-eye {
+            animation: blink 3s infinite;
+        }
+
+        .bear.happy .bear-mouth {
+            border-radius: 0 0 20px 20px;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        /* Speech bubble */
+        .speech-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            border: 3px solid #4a90e2;
+            min-width: 150px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid white;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+        }
+
+        /* Control buttons */
+        .controls {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            background: #4a90e2;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+
+        /* Floating animation */
+        .bear {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-container">
+        <div class="bear happy" id="bear">
+            <!-- Ears -->
+            <div class="bear-ear left">
+                <div class="ear-inner"></div>
+            </div>
+            <div class="bear-ear right">
+                <div class="ear-inner"></div>
+            </div>
+
+            <!-- Head -->
+            <div class="bear-head">
+                <!-- Eyes -->
+                <div class="bear-eye left">
+                    <div class="eye-shine"></div>
+                </div>
+                <div class="bear-eye right">
+                    <div class="eye-shine"></div>
+                </div>
+
+                <!-- Snout -->
+                <div class="bear-snout">
+                    <div class="bear-nose"></div>
+                    <div class="bear-mouth" id="bearMouth"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speech bubble -->
+        <div class="speech-bubble" id="speechBubble">
+            Hi Eduard! I'm your friend Bear! 🐻
+        </div>
+
+        <!-- Controls for testing -->
+        <div class="controls">
+            <button class="btn" onclick="bearSpeak('Hello Eduard! Ready to learn?')">Say Hello</button>
+            <button class="btn" onclick="bearSpeak('Great job! You are doing amazing!')">Encourage</button>
+            <button class="btn" onclick="bearSpeak('Give me the red ball please!')">Give Command</button>
+            <button class="btn" onclick="bearSpeak('')">Stop</button>
+        </div>
+    </div>
+
+    <script>
+        let isSpeaking = false;
+        let speechTimeout;
+
+        function bearSpeak(text) {
+            const speechBubble = document.getElementById('speechBubble');
+            const bearMouth = document.getElementById('bearMouth');
+
+            // Clear any existing speech
+            if (speechTimeout) {
+                clearTimeout(speechTimeout);
+            }
+
+            if (text === '') {
+                // Stop speaking
+                speechBubble.classList.remove('show');
+                bearMouth.classList.remove('talking');
+                isSpeaking = false;
+                speechSynthesis.cancel();
+                return;
+            }
+
+            // Show speech bubble
+            speechBubble.textContent = text;
+            speechBubble.classList.add('show');
+
+            // Start mouth animation
+            bearMouth.classList.add('talking');
+            isSpeaking = true;
+
+            // Speak the text
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.8;
+                utterance.pitch = 1.2;
+                utterance.volume = 0.8;
+
+                utterance.onend = function() {
+                    stopSpeaking();
+                };
+
+                speechSynthesis.speak(utterance);
+
+                // Backup timeout in case onend doesn't fire
+                speechTimeout = setTimeout(() => {
+                    stopSpeaking();
+                }, text.length * 100 + 2000);
+            } else {
+                // If no speech synthesis, just show for a few seconds
+                speechTimeout = setTimeout(() => {
+                    stopSpeaking();
+                }, 3000);
+            }
+        }
+
+        function stopSpeaking() {
+            const speechBubble = document.getElementById('speechBubble');
+            const bearMouth = document.getElementById('bearMouth');
+
+            speechBubble.classList.remove('show');
+            bearMouth.classList.remove('talking');
+            isSpeaking = false;
+        }
+
+        // Auto greeting when page loads
+        window.onload = function() {
+            setTimeout(() => {
+                bearSpeak('Hi Eduard! I\'m your friend Bear! Ready to have fun learning?');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDI - Tell Me</title>
+    <script src="tracker.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px; left: 20px;
+            background: rgba(255,255,255,0.9);
+            color: #667eea;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        .game-area {
+            flex: 1;
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+        }
+
+        /* Bear - HUGE on right */
+        .bear-area {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+        }
+
+        .bear-container { width: 250px; height: 280px; }
+
+        .bear {
+            width: 220px; height: 220px;
+            margin: 0 auto;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .bear.talking { animation: talkingAnimation 0.5s infinite alternate !important; }
+
+        @keyframes talkingAnimation {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-12px) scale(1.08); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .bear-head {
+            width: 160px; height: 160px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            border: 4px solid #654321;
+        }
+
+        .bear-ear {
+            width: 55px; height: 55px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            border: 3px solid #654321;
+        }
+
+        .bear-ear.left { top: -18px; left: 15px; }
+        .bear-ear.right { top: -18px; right: 15px; }
+
+        .ear-inner {
+            width: 28px; height: 28px;
+            background: #DEB887;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bear-snout {
+            width: 80px; height: 58px;
+            background: #DEB887;
+            border-radius: 35px;
+            position: absolute;
+            bottom: 22px; left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #654321;
+        }
+
+        .bear-nose {
+            width: 18px; height: 12px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px; left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bear-mouth {
+            width: 18px; height: 18px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px; left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bear.talking .bear-mouth {
+            width: 35px; height: 28px;
+            background: #FF0000 !important;
+        }
+
+        .bear-eye {
+            width: 22px; height: 22px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 42px;
+            animation: blink 3s infinite;
+        }
+
+        .bear-eye.left { left: 32px; }
+        .bear-eye.right { right: 32px; }
+
+        .eye-shine {
+            width: 6px; height: 6px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px; left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: 3px solid #4a90e2;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+            min-width: 220px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .speech-bubble.show { opacity: 1; }
+
+        /* Game Content */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 { color: #667eea; font-size: 2.2em; }
+
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .progress-dot {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .progress-dot.complete { background: #84fab0; }
+        .progress-dot.current { background: #667eea; color: white; }
+
+        .instruction {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.6em;
+            color: #667eea;
+            margin-bottom: 25px;
+            border: 3px solid #667eea;
+            font-weight: bold;
+        }
+
+        /* HUGE Object Display */
+        .object-display {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .object-emoji {
+            font-size: 12em;
+            line-height: 1;
+        }
+
+        .feedback {
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .feedback.correct { background: #e8f5e9; color: #4caf50; }
+        .feedback.wrong { background: #ffebee; color: #f44336; }
+        .feedback.hint { background: #fff8e1; color: #ff9800; }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-mic {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #333;
+        }
+
+        .btn-hint {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+
+        .start-screen { text-align: center; padding: 50px 30px; }
+        .start-screen h2 { color: #667eea; font-size: 2.5em; margin-bottom: 20px; }
+
+        .start-btn {
+            padding: 25px 70px;
+            font-size: 2.2em;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .game-screen { display: none; }
+
+        @media (max-width: 1100px) {
+            .main-layout { flex-direction: column-reverse; }
+            .bear-area { width: 100%; flex-direction: row; }
+            .object-emoji { font-size: 8em; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='eduard_interface.html'">🏠 Back</button>
+
+    <div class="main-layout">
+        <div class="game-area">
+            <div class="start-screen" id="startScreen">
+                <h2>🗣️ Tell Me!</h2>
+                <p>Say the name of what you see!</p>
+                <button class="start-btn" onclick="startExercise()">START 🚀</button>
+            </div>
+
+            <div class="game-screen" id="gameScreen">
+                <div class="header">
+                    <h1>🗣️ Tell Me!</h1>
+                </div>
+
+                <div class="progress-bar" id="progressBar"></div>
+
+                <div class="instruction" id="instruction">What is this?</div>
+
+                <div class="object-display">
+                    <div class="object-emoji" id="objectDisplay">🐱</div>
+                </div>
+
+                <div class="feedback" id="feedback" style="display: none;"></div>
+
+                <div class="controls">
+                    <button class="btn btn-mic" id="listenBtn" onclick="startListening()">🎤 Tell Me!</button>
+                    <button class="btn btn-hint" id="hintBtn" onclick="showHint()" style="display:none;">💡 Show Answer</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextObject()" style="display:none;">Next ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bear-area">
+            <div class="bear-container">
+                <div class="bear" id="bear">
+                    <div class="bear-ear left"><div class="ear-inner"></div></div>
+                    <div class="bear-ear right"><div class="ear-inner"></div></div>
+                    <div class="bear-head">
+                        <div class="bear-eye left"><div class="eye-shine"></div></div>
+                        <div class="bear-eye right"><div class="eye-shine"></div></div>
+                        <div class="bear-snout">
+                            <div class="bear-nose"></div>
+                            <div class="bear-mouth"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="speech-bubble" id="speechBubble">Tell me!</div>
+        </div>
+    </div>
+
+    <script>
+        let currentObjectIndex = 0;
+        let completedObjects = 0;
+        let totalObjects = 5;
+        let isListening = false;
+        let recognition = null;
+        let isSpeaking = false;
+        let speechTimeout;
+        let questionStartTime = null;
+
+        const objects = [
+            { emoji: '🐱', name: 'cat' },
+            { emoji: '🐶', name: 'dog' },
+            { emoji: '🐟', name: 'fish' },
+            { emoji: '🦜', name: 'bird' },
+            { emoji: '🍌', name: 'banana' }
+        ];
+
+        function bearSpeak(text, bubbleText = null) {
+            const speechBubble = document.getElementById('speechBubble');
+            const bear = document.getElementById('bear');
+            if (speechTimeout) clearTimeout(speechTimeout);
+            speechBubble.textContent = bubbleText || text;
+            speechBubble.classList.add('show');
+            bear.classList.add('talking');
+            isSpeaking = true;
+            let voices = speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                speechSynthesis.onvoiceschanged = () => speakWithVoice(text, speechSynthesis.getVoices());
+                return;
+            }
+            speakWithVoice(text, voices);
+        }
+
+        function speakWithVoice(text, voices) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            const femaleVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Zira') || v.name.includes('Female')));
+            if (femaleVoice) utterance.voice = femaleVoice;
+            utterance.rate = 0.7;
+            utterance.pitch = 0.9;
+            utterance.onend = stopSpeaking;
+            speechSynthesis.speak(utterance);
+            speechTimeout = setTimeout(stopSpeaking, text.length * 100 + 2000);
+        }
+
+        function stopSpeaking() {
+            document.getElementById('speechBubble').classList.remove('show');
+            document.getElementById('bear').classList.remove('talking');
+            isSpeaking = false;
+        }
+
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                    checkAnswer(transcript, objects[currentObjectIndex].name);
+                };
+
+                recognition.onerror = function() {
+                    document.getElementById('feedback').innerHTML = 'Could not hear you. Try again!';
+                    document.getElementById('feedback').className = 'feedback wrong';
+                    document.getElementById('feedback').style.display = 'block';
+                    document.getElementById('listenBtn').disabled = false;
+                    isListening = false;
+                };
+
+                recognition.onend = function() {
+                    isListening = false;
+                    document.getElementById('listenBtn').disabled = false;
+                };
+            } else {
+                alert('Speech recognition not supported. Please use Chrome.');
+            }
+        }
+
+        function startExercise() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            EdiTracker.init('tell_me');
+            initSpeechRecognition();
+            updateProgressBar();
+            bearSpeak("Tell me what you see! Press the microphone and say the name!", "Let's start!");
+            setTimeout(showCurrentObject, 3000);
+        }
+
+        function showCurrentObject() {
+            const currentObject = objects[currentObjectIndex];
+            document.getElementById('objectDisplay').textContent = currentObject.emoji;
+            document.getElementById('instruction').textContent = 'What is this?';
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('hintBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('listenBtn').disabled = false;
+            bearSpeak('Tell me what this is!', 'Tell me!');
+            questionStartTime = EdiTracker.startTimer();
+        }
+
+        function startListening() {
+            if (!recognition || isListening) return;
+            isListening = true;
+            document.getElementById('listenBtn').disabled = true;
+            document.getElementById('feedback').innerHTML = '🎤 Listening...';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('feedback').style.display = 'block';
+
+            try {
+                recognition.start();
+                setTimeout(() => {
+                    if (isListening) {
+                        document.getElementById('hintBtn').style.display = 'inline-block';
+                    }
+                }, 3000);
+            } catch (error) {
+                isListening = false;
+                document.getElementById('listenBtn').disabled = false;
+            }
+        }
+
+        function checkAnswer(heard, correct) {
+            const responseTime = EdiTracker.getResponseTime(questionStartTime);
+            isListening = false;
+            document.getElementById('listenBtn').disabled = true;
+            document.getElementById('hintBtn').style.display = 'none';
+
+            const isCorrect = heard.includes(correct);
+
+            EdiTracker.recordTrial({
+                target: correct,
+                selected: heard,
+                isCorrect: isCorrect,
+                responseTime: responseTime,
+                level: 1
+            });
+
+            if (isCorrect) {
+                document.getElementById('feedback').innerHTML = '✨ Excellent! ✨';
+                document.getElementById('feedback').className = 'feedback correct';
+                bearSpeak(`Wonderful! It's a ${correct}! Great job!`, 'Great! ⭐');
+                completedObjects++;
+                updateProgressBar();
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('feedback').innerHTML = `I heard: "${heard}" - Try again!`;
+                document.getElementById('feedback').className = 'feedback wrong';
+                bearSpeak("Try again!", 'Try again');
+                document.getElementById('listenBtn').disabled = false;
+                document.getElementById('hintBtn').style.display = 'inline-block';
+            }
+            document.getElementById('feedback').style.display = 'block';
+        }
+
+        function showHint() {
+            const currentObject = objects[currentObjectIndex];
+            const responseTime = EdiTracker.getResponseTime(questionStartTime);
+
+            EdiTracker.recordTrial({
+                target: currentObject.name,
+                selected: 'hint_used',
+                isCorrect: false,
+                responseTime: responseTime,
+                level: 1
+            });
+
+            document.getElementById('feedback').innerHTML = `💡 It's a ${currentObject.name}!`;
+            document.getElementById('feedback').className = 'feedback hint';
+            document.getElementById('hintBtn').style.display = 'none';
+            bearSpeak(`It's a ${currentObject.name}!`, currentObject.name);
+            completedObjects++;
+            updateProgressBar();
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextObject() {
+            currentObjectIndex++;
+            if (currentObjectIndex >= objects.length) {
+                finishExercise();
+            } else {
+                showCurrentObject();
+            }
+        }
+
+        function finishExercise() {
+            document.getElementById('instruction').textContent = '🎉 Exercise Complete! 🎉';
+            document.getElementById('objectDisplay').textContent = '🏆';
+            document.getElementById('feedback').innerHTML = 'Amazing work!';
+            document.getElementById('feedback').className = 'feedback correct';
+            document.getElementById('feedback').style.display = 'block';
+            document.getElementById('listenBtn').style.display = 'none';
+            document.getElementById('hintBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            bearSpeak('You did it! Amazing!', 'Champion! 🏆');
+            EdiTracker.endSession();
+        }
+
+        function updateProgressBar() {
+            const bar = document.getElementById('progressBar');
+            bar.innerHTML = '';
+            for (let i = 0; i < totalObjects; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                if (i < completedObjects) dot.classList.add('complete');
+                else if (i === currentObjectIndex) dot.classList.add('current');
+                dot.textContent = i + 1;
+                bar.appendChild(dot);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            speechSynthesis.getVoices();
+            setTimeout(() => bearSpeak("Hi! Ready to play Tell Me?", "Hi! 🐻"), 1000);
+        });
+
+        window.addEventListener('beforeunload', () => EdiTracker.endSession());
+    </script>
+</body>
+</html>

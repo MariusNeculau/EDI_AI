@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aidy - Matching Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #e55a8a;
+            transform: translateY(-2px);
+        }
+
+        /* Bear Avatar */
+        .bear-container {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            z-index: 10;
+        }
+        .bear {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            animation: float 3s ease-in-out infinite;
+        }
+        .bear.talking {
+            animation: talkingAnimation 0.5s infinite alternate !important;
+        }
+        @keyframes talkingAnimation {
+            0% { transform: translateY(0px) scale(1) rotate(0deg); filter: brightness(1); }
+            100% { transform: translateY(-8px) scale(1.1) rotate(2deg); filter: brightness(1.2); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .bear-head {
+            width: 70px;
+            height: 70px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            border: 2px solid #654321;
+        }
+        .bear-ear {
+            width: 25px;
+            height: 25px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            border: 1px solid #654321;
+        }
+        .bear-ear.left { top: -8px; left: 10px; }
+        .bear-ear.right { top: -8px; right: 10px; }
+        .ear-inner {
+            width: 12px;
+            height: 12px;
+            background: #DEB887;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .bear-snout {
+            width: 35px;
+            height: 25px;
+            background: #DEB887;
+            border-radius: 20px;
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #654321;
+        }
+        .bear-nose {
+            width: 8px;
+            height: 5px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .bear-mouth {
+            width: 8px;
+            height: 8px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.2s ease;
+        }
+        .bear.talking .bear-mouth {
+            width: 16px;
+            height: 12px;
+            background: #FF0000 !important;
+            border-radius: 50%;
+            animation: mouthPulse 0.3s infinite alternate;
+        }
+        @keyframes mouthPulse {
+            0% { width: 12px; height: 8px; background: #FF0000; }
+            100% { width: 18px; height: 14px; background: #FF4444; }
+        }
+        .bear-eye {
+            width: 10px;
+            height: 10px;
+            background: #2C1810;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            animation: blink 3s infinite;
+        }
+        .bear-eye.left { left: 15px; }
+        .bear-eye.right { right: 15px; }
+        .eye-shine {
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+        }
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        .speech-bubble {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 2px solid #4a90e2;
+            min-width: 80px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #2c3e50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        .speech-bubble.show { opacity: 1; }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            margin-right: 140px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .start-screen h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .start-btn {
+            padding: 30px 80px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .progress {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .progress-item {
+            text-align: center;
+        }
+
+        .progress-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .level-badge {
+            background: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .instruction {
+            text-align: center;
+            font-size: 1.8em;
+            color: #667eea;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 4px solid #ddd;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            font-size: 4em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .card.selected {
+            border-color: #667eea;
+            background: #e8eef9;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .card.matched {
+            border-color: #28a745;
+            background: #d4edda;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: matchSuccess 0.5s ease;
+        }
+
+        @keyframes matchSuccess {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .card.wrong {
+            animation: shake 0.5s ease;
+            border-color: #dc3545;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='eduard_interface.html'">🏠 Back</button>
+
+    <div class="container">
+        <div class="bear-container">
+            <div class="bear" id="bear">
+                <div class="bear-ear left"><div class="ear-inner"></div></div>
+                <div class="bear-ear right"><div class="ear-inner"></div></div>
+                <div class="bear-head">
+                    <div class="bear-eye left"><div class="eye-shine"></div></div>
+                    <div class="bear-eye right"><div class="eye-shine"></div></div>
+                    <div class="bear-snout">
+                        <div class="bear-nose"></div>
+                        <div class="bear-mouth" id="bearMouth"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="speech-bubble" id="speechBubble"></div>
+        </div>
+
+        <div class="start-screen" id="startScreen">
+            <h1>🎴 Matching Game!</h1>
+            <p class="subtitle">Find the matching pairs!</p>
+            <h2>Ready to Match? 🌟</h2>
+            <button class="start-btn" onclick="startGame()">START 🚀</button>
+        </div>
+
+        <div class="game-screen" id="gameScreen">
+            <h1>🎴 Matching Game</h1>
+            <p class="subtitle">Click on two cards that match!</p>
+
+            <div class="level-indicator" style="text-align: center;">
+                <span class="level-badge" id="levelBadge">Level: Easy</span>
+            </div>
+
+            <div class="progress">
+                <div class="progress-item">
+                    <div class="progress-value" id="matchedCount">0</div>
+                    <div class="progress-label">Pairs Found</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-value" id="totalPairs">0</div>
+                    <div class="progress-label">Total Pairs</div>
+                </div>
+            </div>
+
+            <div class="instruction" id="instruction">
+                Find the matching pairs!
+            </div>
+
+            <div class="cards-grid" id="cardsGrid"></div>
+
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="resetLevel()">🔄 Try Again</button>
+                <button class="btn btn-primary" onclick="nextLevel()" style="display:none;" id="nextBtn">➡️ Next Level</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let matchedCount = 0;
+        let selectedCards = [];
+        let canSelect = true;
+        let isSpeaking = false;
+        let speechTimeout;
+
+        const levels = {
+            1: ['🍎', '🍌', '🍊', '🍇'],  // 4 pairs
+            2: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊'],  // 6 pairs
+            3: ['⚽', '🏀', '🎾', '🏐', '🎱', '🏈', '⚾', '🥎']  // 8 pairs
+        };
+
+        function bearSpeak(text, bubbleText = null) {
+            const speechBubble = document.getElementById('speechBubble');
+            const bear = document.getElementById('bear');
+            if (speechTimeout) clearTimeout(speechTimeout);
+            speechBubble.textContent = bubbleText || text;
+            speechBubble.classList.add('show');
+            bear.classList.add('talking');
+            isSpeaking = true;
+            let voices = speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                speechSynthesis.onvoiceschanged = () => {
+                    voices = speechSynthesis.getVoices();
+                    speakWithVoice(text, voices);
+                };
+                return;
+            }
+            speakWithVoice(text, voices);
+        }
+
+        function speakWithVoice(text, voices) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            const femaleVoice = voices.find(voice =>
+                voice.lang.includes('en') &&
+                (voice.name.includes('Zira') || voice.name.includes('Female') ||
+                 (voice.name.includes('Google') && voice.name.includes('US')))
+            );
+            if (femaleVoice) utterance.voice = femaleVoice;
+            utterance.rate = 0.7;
+            utterance.pitch = 0.9;
+            utterance.volume = 0.8;
+            utterance.onend = stopSpeaking;
+            speechSynthesis.speak(utterance);
+            speechTimeout = setTimeout(stopSpeaking, text.length * 100 + 2000);
+        }
+
+        function stopSpeaking() {
+            document.getElementById('speechBubble').classList.remove('show');
+            document.getElementById('bear').classList.remove('talking');
+            isSpeaking = false;
+        }
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            bearSpeak("Great Aidy! Find the matching pairs! Click on two cards that are the same!", "Let's match!");
+            setTimeout(setupLevel, 2000);
+        }
+
+        function setupLevel() {
+            const items = levels[currentLevel];
+            const totalPairs = items.length;
+
+            // Create pairs
+            const cards = [...items, ...items]; // Duplicate for pairs
+
+            // Shuffle cards
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+
+            // Display cards
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = emoji;
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                card.onclick = () => selectCard(card);
+                grid.appendChild(card);
+            });
+
+            matchedCount = 0;
+            selectedCards = [];
+            document.getElementById('matchedCount').textContent = matchedCount;
+            document.getElementById('totalPairs').textContent = totalPairs;
+            document.getElementById('nextBtn').style.display = 'none';
+            updateLevelBadge();
+        }
+
+        function selectCard(card) {
+            if (!canSelect || card.classList.contains('matched') || card.classList.contains('selected')) {
+                return;
+            }
+
+            card.classList.add('selected');
+            selectedCards.push(card);
+
+            if (selectedCards.length === 2) {
+                canSelect = false;
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = selectedCards;
+            const emoji1 = card1.dataset.emoji;
+            const emoji2 = card2.dataset.emoji;
+
+            if (emoji1 === emoji2) {
+                // Match!
+                card1.classList.remove('selected');
+                card2.classList.remove('selected');
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+
+                matchedCount++;
+                document.getElementById('matchedCount').textContent = matchedCount;
+
+                bearSpeak("Yes Aidy! That's a match! Great job!", "Match! 🎉");
+
+                if (matchedCount === levels[currentLevel].length) {
+                    setTimeout(levelComplete, 1500);
+                }
+            } else {
+                // No match
+                card1.classList.add('wrong');
+                card2.classList.add('wrong');
+                bearSpeak("Not quite Aidy! Try again!", "Try again!");
+
+                setTimeout(() => {
+                    card1.classList.remove('selected', 'wrong');
+                    card2.classList.remove('selected', 'wrong');
+                }, 1000);
+            }
+
+            selectedCards = [];
+            setTimeout(() => { canSelect = true; }, 1000);
+        }
+
+        function levelComplete() {
+            bearSpeak("Amazing Aidy! You found all the pairs! You're doing great!", "Champion! 🏆");
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextLevel() {
+            if (currentLevel < 3) {
+                currentLevel++;
+                bearSpeak("Let's try a harder level Aidy! You can do it!", "Next level!");
+                setTimeout(setupLevel, 2000);
+            } else {
+                bearSpeak("Wow Aidy! You completed all levels! You're amazing!", "All done! 🎊");
+            }
+        }
+
+        function resetLevel() {
+            bearSpeak("Okay Aidy! Let's try again!", "Try again!");
+            setTimeout(setupLevel, 1500);
+        }
+
+        function updateLevelBadge() {
+            const levels = ['', 'Easy', 'Medium', 'Hard'];
+            document.getElementById('levelBadge').textContent = `Level: ${levels[currentLevel]}`;
+        }
+
+        // Preload voices and speak on START screen
+        window.addEventListener('load', function() {
+            let voices = speechSynthesis.getVoices();
+
+            if (voices.length === 0) {
+                speechSynthesis.onvoiceschanged = () => {
+                    voices = speechSynthesis.getVoices();
+                    setTimeout(function() {
+                        bearSpeak("Hi Aidy! I'm Bear! Ready to play Matching Game?", "Hi Aidy! 🐻");
+                    }, 1000);
+                };
+                speechSynthesis.getVoices();
+            } else {
+                setTimeout(function() {
+                    bearSpeak("Hi Aidy! I'm Bear! Ready to play Matching Game?", "Hi Aidy! 🐻");
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
