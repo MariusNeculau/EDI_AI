@@ -1,0 +1,52 @@
+# IDE și editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Local configuration (dacă ai secrete)
+config.local.py
+.env
+.env.local
+
+# Test files (opțional)
+test_*.html
+*_test.py
